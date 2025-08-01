@@ -1,0 +1,42 @@
+name: Update Wave Formula
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # hourly check
+  repository_dispatch:
+    types: [wave-release]
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tap repo
+        uses: actions/checkout@v4
+
+      - name: Fetch latest release info
+        id: get_release
+        run: |
+          RELEASE_JSON=$(curl -s https://api.github.com/repos/make-wave/wave/releases/latest)
+          URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="wave-macos-latest") | .browser_download_url')
+          SHA256=$(curl -L "$URL" | shasum -a 256 | awk '{print $1}')
+          VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name' | sed 's/^v//')
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update formula
+        run: |
+          sed -i \
+            -e "s|url \".*\"|url \"${{ steps.get_release.outputs.url }}\"|" \
+            -e "s|sha256 \".*\"|sha256 \"${{ steps.get_release.outputs.sha256 }}\"|" \
+            -e "s|version \".*\"|version \"${{ steps.get_release.outputs.version }}\"|" \
+            Formula/wave.rb
+
+      - name: Commit and push changes
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Update wave formula to ${{ steps.get_release.outputs.version }}"
+          branch: update-wave-formula
+          title: "Update wave formula to ${{ steps.get_release.outputs.version }}"
+          body: "Automated update triggered by new release."
