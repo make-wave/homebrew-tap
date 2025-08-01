@@ -21,7 +21,7 @@ class Wave < Formula
   end
 
   def install
-    bin.install "wave"
+    bin.install Dir["wave*"].first => "wave"
   end
 
   test do
