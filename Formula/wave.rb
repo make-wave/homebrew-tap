@@ -11,7 +11,7 @@ class Wave < Formula
     end
     on_intel do
       url "https://github.com/make-wave/wave/releases/download/v0.0.4/wave-macos-x86_64"
-      sha256 "9a3c8ca97eb6c33ae9e6f0029496276301ecd7b5053317ca7fdb00eb71961ae4"
+      sha256 "fc18f49e7a17f313edd2f0b247806a035bb08d95cdc64b6a1008a9fa62142647"
     end
   end
 
