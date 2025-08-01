@@ -45,23 +45,9 @@ jobs:
             -e "s|version \".*\"|version \"${{ steps.get_release.outputs.version }}\"|" \
             Formula/wave.rb
       - name: Commit and push changes
-        id: cpr
-        uses: peter-evans/create-pull-request@v5
-        with:
-          commit-message: Update wave formula to ${{ steps.get_release.outputs.version }}
-          branch: update-wave-formula
-          title: Update wave formula to ${{ steps.get_release.outputs.version }}
-          body: Automated update triggered by new release.
-          token: ${{ secrets.UPDATE_FORMULA_PAT }}
-      - name: Enable Pull Request Automerge
-        if: steps.cpr.outputs.pull-request-operation == 'created'
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.UPDATE_FORMULA_PAT }}
-          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          merge-method: squash
-      - name: Auto approve PR
-        if: steps.cpr.outputs.pull-request-operation == 'created'
-        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ secrets.UPDATE_FORMULA_PAT }}
+        run: |-
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add Formula/wave.rb
+          git commit -m "Update wave formula to ${{ steps.get_release.outputs.version }}"
+          git push origin HEAD:main
