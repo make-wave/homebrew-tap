@@ -1,13 +1,27 @@
 class Wave < Formula
   desc "Your app description"
   homepage "https://github.com/make-wave/wave"
-  url "https://github.com/make-wave/wave/releases/download/v0.0.2/wave-macos-latest"
-  sha256 "4b81d36ade6cb72572b7dec5582482f426b9758ad14b02056d25208c895d4113"
-  license "MIT"
   version "0.0.2"
+  license "MIT"
+
+  on_macos do
+    on_arm do
+      url "https://github.com/make-wave/wave/releases/download/v0.0.2/wave-macos-arm64"
+      sha256 "SHA256_FOR_ARM64"
+    end
+    on_intel do
+      url "https://github.com/make-wave/wave/releases/download/v0.0.2/wave-macos-x86_64"
+      sha256 "SHA256_FOR_X86_64"
+    end
+  end
+
+  on_linux do
+    url "https://github.com/make-wave/wave/releases/download/v0.0.2/wave-linux-x86_64"
+    sha256 "SHA256_FOR_LINUX"
+  end
 
   def install
-    bin.install "wave-macos-latest" => "wave"
+    bin.install "wave"
   end
 
   test do

@@ -19,17 +19,29 @@ jobs:
         id: get_release
         run: |
           RELEASE_JSON=$(curl -s https://api.github.com/repos/make-wave/wave/releases/latest)
-          URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="wave-macos-latest") | .browser_download_url')
-          SHA256=$(curl -L "$URL" | shasum -a 256 | awk '{print $1}')
+          URL_ARM64=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="wave-macos-arm64") | .browser_download_url')
+          URL_X86_64=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="wave-macos-x86_64") | .browser_download_url')
+          URL_LINUX=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="wave-linux-x86_64") | .browser_download_url')
+          SHA256_ARM64=$(curl -L "$URL_ARM64" | shasum -a 256 | awk '{print $1}')
+          SHA256_X86_64=$(curl -L "$URL_X86_64" | shasum -a 256 | awk '{print $1}')
+          SHA256_LINUX=$(curl -L "$URL_LINUX" | shasum -a 256 | awk '{print $1}')
           VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name' | sed 's/^v//')
-          echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "url_arm64=$URL_ARM64" >> $GITHUB_OUTPUT
+          echo "sha256_arm64=$SHA256_ARM64" >> $GITHUB_OUTPUT
+          echo "url_x86_64=$URL_X86_64" >> $GITHUB_OUTPUT
+          echo "sha256_x86_64=$SHA256_X86_64" >> $GITHUB_OUTPUT
+          echo "url_linux=$URL_LINUX" >> $GITHUB_OUTPUT
+          echo "sha256_linux=$SHA256_LINUX" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Update formula
         run: |
           sed -i \
-            -e "s|url \".*\"|url \"${{ steps.get_release.outputs.url }}\"|" \
-            -e "s|sha256 \".*\"|sha256 \"${{ steps.get_release.outputs.sha256 }}\"|" \
+            -e "s|url \"https://github.com/make-wave/wave/releases/download/.*/wave-macos-arm64\"|url \"${{ steps.get_release.outputs.url_arm64 }}\"|" \
+            -e "s|sha256 \"SHA256_FOR_ARM64\"|sha256 \"${{ steps.get_release.outputs.sha256_arm64 }}\"|" \
+            -e "s|url \"https://github.com/make-wave/wave/releases/download/.*/wave-macos-x86_64\"|url \"${{ steps.get_release.outputs.url_x86_64 }}\"|" \
+            -e "s|sha256 \"SHA256_FOR_X86_64\"|sha256 \"${{ steps.get_release.outputs.sha256_x86_64 }}\"|" \
+            -e "s|url \"https://github.com/make-wave/wave/releases/download/.*/wave-linux-x86_64\"|url \"${{ steps.get_release.outputs.url_linux }}\"|" \
+            -e "s|sha256 \"SHA256_FOR_LINUX\"|sha256 \"${{ steps.get_release.outputs.sha256_linux }}\"|" \
             -e "s|version \".*\"|version \"${{ steps.get_release.outputs.version }}\"|" \
             Formula/wave.rb
       - name: Commit and push changes
