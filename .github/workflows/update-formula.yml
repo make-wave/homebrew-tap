@@ -32,6 +32,7 @@ jobs:
           echo "sha256_x86_64=$SHA256_X86_64" >> $GITHUB_OUTPUT
           echo "url_linux=$URL_LINUX" >> $GITHUB_OUTPUT
           echo "sha256_linux=$SHA256_LINUX" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           # Debug output
           echo "Computed hashes:"
           echo "ARM64: $SHA256_ARM64"
@@ -39,16 +40,12 @@ jobs:
           echo "LINUX: $SHA256_LINUX"
       - name: Update formula
         run: |
-          # Update URLs to point to new version
-          sed -i "s|releases/download/v[^/]*/wave-macos-arm64|releases/download/v${{ steps.get_release.outputs.version }}/wave-macos-arm64|g" Formula/wave.rb
-          sed -i "s|releases/download/v[^/]*/wave-macos-x86_64|releases/download/v${{ steps.get_release.outputs.version }}/wave-macos-x86_64|g" Formula/wave.rb
-          sed -i "s|releases/download/v[^/]*/wave-linux-x86_64|releases/download/v${{ steps.get_release.outputs.version }}/wave-linux-x86_64|g" Formula/wave.rb
-          
-          # Update version
+          # Update version and URLs
           sed -i 's/version "[^"]*"/version "${{ steps.get_release.outputs.version }}"/' Formula/wave.rb
-          
-          # Update SHA256 hashes by finding the line after each platform's URL and replacing the entire sha256 line
-          # Use awk for more reliable multiline replacement
+          sed -i 's|releases/download/v[^/]*/wave-macos-arm64|releases/download/v${{ steps.get_release.outputs.version }}/wave-macos-arm64|g' Formula/wave.rb
+          sed -i 's|releases/download/v[^/]*/wave-macos-x86_64|releases/download/v${{ steps.get_release.outputs.version }}/wave-macos-x86_64|g' Formula/wave.rb
+          sed -i 's|releases/download/v[^/]*/wave-linux-x86_64|releases/download/v${{ steps.get_release.outputs.version }}/wave-linux-x86_64|g' Formula/wave.rb
+          # Update SHA256 hashes
           awk -v arm64_sha="${{ steps.get_release.outputs.sha256_arm64 }}" \
               -v x86_64_sha="${{ steps.get_release.outputs.sha256_x86_64 }}" \
               -v linux_sha="${{ steps.get_release.outputs.sha256_linux }}" '
@@ -71,7 +68,7 @@ jobs:
           }
           { print }
           ' Formula/wave.rb > Formula/wave.rb.tmp && mv Formula/wave.rb.tmp Formula/wave.rb
-          
+
           # Show the updated formula for debugging
           echo "Updated formula:"
           cat Formula/wave.rb

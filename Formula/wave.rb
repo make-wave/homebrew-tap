@@ -1,5 +1,5 @@
 class Wave < Formula
-  desc "Your app description"
+  desc "An HTTP client for folks who like their terminal"
   homepage "https://github.com/make-wave/wave"
   version ""
   license "MIT"
