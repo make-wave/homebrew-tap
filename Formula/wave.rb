@@ -7,7 +7,7 @@ class Wave < Formula
   on_macos do
     on_arm do
       url "https://github.com/make-wave/wave/releases/download/v0.1.0/wave-macos-arm64"
-      sha256 "2cab8fb89a09dee347ab062f63f0db7d6016db9e215990c2d73e00864ef8b775"
+      sha256 "8e8052a0c2d1b3568998cc84bea4b37c23a7db71d547cf8f34b6b109f2f55a30"
     end
     on_intel do
       url "https://github.com/make-wave/wave/releases/download/v0.1.0/wave-macos-x86_64"
