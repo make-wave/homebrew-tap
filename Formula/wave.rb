@@ -17,7 +17,7 @@ class Wave < Formula
 
   on_linux do
     url "https://github.com/make-wave/wave/releases/download/v0.1.2/wave-linux-x86_64"
-      sha256 "272da209f1826907878e0db4fd6eb02d7560a82f933c66bc6adc2ae14eb777cb"
+    sha256 "272da209f1826907878e0db4fd6eb02d7560a82f933c66bc6adc2ae14eb777cb"
   end
 
   def install

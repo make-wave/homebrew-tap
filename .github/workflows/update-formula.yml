@@ -3,7 +3,7 @@ name: Update Wave Formula
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 * * * *  # hourly check
+    - cron: 0 * * * *
   repository_dispatch:
     types: [wave-release]
 permissions:
@@ -15,7 +15,8 @@ jobs:
     steps:
       - name: Checkout tap repo
         uses: actions/checkout@v4
-      - name: Fetch latest release info
+
+      - name: Fetch latest release version
         id: get_release
         run: |
           RELEASE_JSON=$(curl -s https://api.github.com/repos/make-wave/wave/releases/latest)
@@ -38,6 +39,7 @@ jobs:
           echo "ARM64: $SHA256_ARM64"
           echo "X86_64: $SHA256_X86_64"
           echo "LINUX: $SHA256_LINUX"
+
       - name: Update formula
         run: |
           # Update version and URLs
@@ -56,11 +58,11 @@ jobs:
           /^  end$/ { in_arm = 0; in_intel = 0; in_linux = 0 }
           /sha256/ {
             if (in_arm) {
-              print "      sha256 \"" arm64_sha "\""
+              print "    sha256 \"" arm64_sha "\""
             } else if (in_intel) {
-              print "      sha256 \"" x86_64_sha "\""
+              print "    sha256 \"" x86_64_sha "\""
             } else if (in_linux) {
-              print "      sha256 \"" linux_sha "\""
+              print "    sha256 \"" linux_sha "\""
             } else {
               print $0
             }
@@ -72,6 +74,7 @@ jobs:
           # Show the updated formula for debugging
           echo "Updated formula:"
           cat Formula/wave.rb
+
       - name: Check if changes were made
         id: check_changes
         run: |
@@ -83,6 +86,7 @@ jobs:
             echo "Changes detected:"
             git diff
           fi
+
       - name: Commit and push changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |-
