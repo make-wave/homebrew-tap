@@ -1,23 +1,23 @@
 class Wave < Formula
   desc "An HTTP client for folks who like their terminal"
   homepage "https://github.com/make-wave/wave"
-  version "0.2.0"
+  version "0.2.1"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/make-wave/wave/releases/download/v0.2.0/wave-macos-arm64"
-    sha256 "c627835090f345a02f80c1495c719719a7ea353745d367fe71e773cefab37e5c"
+      url "https://github.com/make-wave/wave/releases/download/v0.2.1/wave-macos-arm64"
+    sha256 "273f82bce755fa379889cdeb9a2546776286d7aa4cce18708fffe5ed192a3c70"
     end
     on_intel do
-      url "https://github.com/make-wave/wave/releases/download/v0.2.0/wave-macos-x86_64"
-    sha256 "b50ffb7a8aab864bcbabc10f8cc5124dc630741306a227b72e60060c0bb66db2"
+      url "https://github.com/make-wave/wave/releases/download/v0.2.1/wave-macos-x86_64"
+    sha256 "463319110d09317f4ef492a1ae1b48e57ccf6a731a8ae05fcdecfd7cbc7b4ce6"
     end
   end
 
   on_linux do
-    url "https://github.com/make-wave/wave/releases/download/v0.2.0/wave-linux-x86_64"
-    sha256 "ea271e19ee2c507577313672690ee4ed9a4c1df8edc646f25996fdd37fe78759"
+    url "https://github.com/make-wave/wave/releases/download/v0.2.1/wave-linux-x86_64"
+    sha256 "5005c5644e0993a6c2b1289087680ccc9e1d777639c3c05dfdbcc28f75fe73b4"
   end
 
   def install
